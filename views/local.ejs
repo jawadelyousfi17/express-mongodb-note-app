@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IndexedDB Local Storage</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    form {
+      margin-bottom: 20px;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h2>IndexedDB Local Storage</h2>
+
+  <form id="noteForm">
+    <label for="title">Title:</label>
+    <input type="text" id="title" required>
+
+    <label for="content">Content:</label>
+    <textarea id="content" required></textarea>
+
+    <button type="submit">Add Note</button>
+  </form>
+
+  <h3>Notes:</h3>
+  <ul id="noteList"></ul>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const noteForm = document.getElementById('noteForm');
+      const titleInput = document.getElementById('title');
+      const contentInput = document.getElementById('content');
+      const noteList = document.getElementById('noteList');
+
+      // Open or create the database
+      const request = indexedDB.open('notesDB', 1);
+
+      request.onerror = function (event) {
+        console.error('Database error:', event.target.error);
+      };
+
+      // Create or update the database schema
+      request.onupgradeneeded = function (event) {
+        const db = event.target.result;
+
+        // Create an object store (table) for notes
+        const objectStore = db.createObjectStore('notes', { keyPath: 'id', autoIncrement: true });
+
+        // Define the structure of the notes object store
+        objectStore.createIndex('title', 'title', { unique: false });
+        objectStore.createIndex('content', 'content', { unique: false });
+      };
+
+      // Handle successful database opening
+      request.onsuccess = function (event) {
+        const db = event.target.result;
+
+        // Handle form submission to add a new note
+        noteForm.addEventListener('submit', function (e) {
+          e.preventDefault();
+
+          const title = titleInput.value;
+          const content = contentInput.value;
+
+          // Open a transaction and get the object store
+          const transaction = db.transaction(['notes'], 'readwrite');
+          const objectStore = transaction.objectStore('notes');
+
+          // Add a new note to the object store
+          const note = { title, content };
+          const addRequest = objectStore.add(note);
+
+          // Handle success or error of adding a note
+          addRequest.onsuccess = function () {
+            titleInput.value = '';
+            contentInput.value = '';
+            displayNotes();
+          };
+
+          addRequest.onerror = function (event) {
+            console.error('Error adding note:', event.target.error);
+          };
+        });
+
+        // Display existing notes on page load
+        displayNotes();
+
+        // Function to display notes in the list
+        function displayNotes() {
+          // Open a transaction and get the object store
+          const transaction = db.transaction(['notes'], 'readonly');
+          const objectStore = transaction.objectStore('notes');
+
+          // Create a cursor to iterate over the notes
+          const request = objectStore.openCursor();
+
+          // Clear the existing list
+          noteList.innerHTML = '';
+
+          request.onsuccess = function (event) {
+            const cursor = event.target.result;
+
+            if (cursor) {
+              const note = cursor.value;
+              const listItem = document.createElement('li');
+              listItem.textContent = `Title: ${note.title}, Content: ${note.content}`;
+              noteList.appendChild(listItem);
+
+              cursor.continue();
+            }
+          };
+        }
+      };
+    });
+  </script>
+</body>
+</html>

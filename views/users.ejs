@@ -1,0 +1,76 @@
+<%- include('include/navbar') %>
+
+<style> 
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+
+    .users-container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 5px;
+    }
+
+    h2 {
+      color: #333;
+      text-align: center;
+    }
+
+    .user {
+      margin-bottom: 20px;
+      padding: 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background-color: #fff;
+    }
+
+    h3 {
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    p {
+      margin-bottom: 15px;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+  </style>
+
+<div class="users-container">
+    <h2>Users and Notes</h2>
+
+    <% users.forEach(user => { %>
+      <div class="user">
+       <a href="/u/<%= user.username %>"><h3><%= user.username %></h3></a> 
+        <p><strong>Name:</strong> <%= user.name %></p>
+
+        <% if (user.notes.length > 0) { %>
+          <ul>
+            <% user.notes.forEach(note => { %>
+              <li>
+                <strong>Title:</strong> <%= note.title %><br>
+                <strong>Content:</strong> <%= note.notebody %>
+              </li>
+            <% }); %>
+          </ul>
+        <% } else { %>
+          <p>No notes available for this user.</p>
+        <% } %>
+
+      </div>
+    <% }); %>
+
+  </div>

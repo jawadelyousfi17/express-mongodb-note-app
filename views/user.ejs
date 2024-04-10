@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+  <title>User Info and Notes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+
+    .user-container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 5px;
+    }
+
+    h2 {
+      color: #333;
+      text-align: center;
+    }
+
+    .user-info {
+      margin-bottom: 20px;
+      padding: 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background-color: #fff;
+    }
+
+    h3 {
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    p {
+      margin-bottom: 15px;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+    .n{
+        display: flex;
+        flex-direction: column;
+    }
+  </style>
+
+</head>
+<%- include('include/navbar') %>
+<body>
+  <div class="user-container">
+    <h2>User Info and Notes</h2>
+
+    <div class="user-info">
+      <h3>USER : <%= user.username %></h3>
+      <p><strong>Name:</strong> <%= user.name %></p>
+       
+      <% if (user.notes.length > 0) { %>
+
+         <section class="n">
+          <% user.notes.forEach(note => { %>
+            <li>
+              <strong>Title:</strong> <%= note.title %><br>
+              <strong>Content:</strong> <%= note.notebody %>
+            </li>
+          <% }); %>
+     <section>
+      <% } else { %>
+        <p>No notes available for this user.</p>
+      <% } %>
+
+    </div>
+  </div>
+</body>
