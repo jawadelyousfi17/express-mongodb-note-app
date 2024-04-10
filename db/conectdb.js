@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const dburl = 'mongodb://127.0.0.1:27017/notes'
+const dburl = 'mongodb+srv://jawadpro17:Jawad.18@ecomerce-api-db.ayaobei.mongodb.net/notes?retryWrites=true&w=majority&appName=ecomerce-api-db'
 
 const conectDb = async (conected) => mongoose.connect(dburl).then(
     (result) => {
